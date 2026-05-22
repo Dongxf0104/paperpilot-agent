@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.local
+*.key
+
+# Large or temporary data
+data/
+datasets/
+raw_data/
+*.zip
+*.rar
+*.7z
+
+# Temporary outputs
+tmp/
+temp/
+logs/
+*.log
+
+# Recovered / damaged files
+recovered/

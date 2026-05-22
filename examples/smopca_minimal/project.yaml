@@ -1,0 +1,21 @@
+project:
+  name: smopca_minimal
+inputs:
+  paper:
+    path: docs/legacy_experiments.md
+    summary: Lightweight SMOPCA-inspired benchmark planning example for regression baselines.
+    claimed_contributions: [adapter workflow, benchmark reporting]
+  repository: .
+dataset:
+  path: examples/smopca_minimal/sample_dataset.csv
+  target: y
+task:
+  type: regression
+  split: deterministic 80/20 holdout
+  seed: 0
+metrics: [mae, mse, rmse, r2]
+baselines:
+  - name: mean
+  - name: linear_regression
+outputs:
+  dir: outputs
