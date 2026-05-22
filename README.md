@@ -1,126 +1,187 @@
 # PaperPilot-Agent
 
-PaperPilot-Agent is a local multi-agent workflow for research baseline and benchmark work. It helps researchers turn papers, method repositories, datasets, metrics, and baseline choices into executable experiment plans, adapter plans, runner steps, result analysis, and concise reports.
+PaperPilot-Agent is a local MVP multi-agent workflow for turning research papers, method repositories, datasets, metrics, and baseline choices into benchmark plans, adapter notes, runner steps, consistency checks, and concise markdown reports.
 
-The current open-source version is deterministic and rule-based by default. It does not require an LLM API key, so it can run locally in a fresh checkout and pass tests without external services.
+It is currently a deterministic prototype: the open-source workflow runs locally from a `project.yaml` file and does not require an LLM API key.
 
-## Why This Exists
+## Why This Project Matters
 
-Reproducing research baselines is often less about one model and more about coordination:
+Research baseline and benchmark work is often blocked by coordination rather than by a single model implementation:
 
-- papers describe claims, but not always executable steps
-- method repositories vary in structure and entrypoints
-- datasets and metrics must match the task
-- third-party baselines need adapters before they can be compared fairly
-- benchmark results need a repeatable summary and consistency checks
+- Papers describe claims and evaluation settings, but those details are not always packaged as runnable steps.
+- Method repositories may have unclear entrypoints, dependencies, or assumptions.
+- Datasets, targets, splits, metrics, and baseline choices need to be aligned before results are meaningful.
+- External baselines usually need adapters before they can be compared fairly.
+- Benchmark notes can drift from the actual configuration unless they are generated from a shared workflow context.
 
-PaperPilot-Agent provides a small, inspectable workflow for that coordination layer.
+PaperPilot-Agent focuses on this coordination layer. It helps researchers make the planning surface explicit before investing time in full reproduction or large-scale experiment execution.
 
-## Agent Workflow
+## Core Workflow
 
 ```text
-project.yaml
-   |
-   v
-PaperReader -> CodeScanner -> ExperimentDesigner -> BaselineBuilder
-   |              |                 |                    |
-   v              v                 v                    v
-RunnerPlanner -> ResultAnalyst -> ConsistencyChecker -> ReportGenerator
-   |
-   v
+Paper / Repo / Dataset / Metrics
+        |
+        v
+PaperReaderAgent
+        |
+        v
+CodeScannerAgent
+        |
+        v
+BaselineBuilderAgent
+        |
+        v
+ExperimentDesignerAgent
+        |
+        v
+RunnerPlannerAgent
+        |
+        v
+ResultAnalystAgent
+        |
+        v
+ConsistencyCheckerAgent
+        |
+        v
+ReportGeneratorAgent
+        |
+        v
 outputs/report.md
 ```
 
+The workflow passes a shared context dictionary through lightweight agents. Each agent adds one layer of planning or validation, and the final report is written as markdown. In the current prototype, baseline planning and experiment planning are adjacent config-driven steps; neither executes external research code yet.
+
 ## Agent Roles
 
-- `PaperReaderAgent`: summarizes paper inputs and extracts method keywords.
-- `CodeScannerAgent`: inspects the configured repository path and reports likely entrypoints, dependencies, and risks.
-- `ExperimentDesignerAgent`: creates a task-aware experiment plan from dataset, metrics, and baselines.
-- `BaselineBuilderAgent`: converts baseline config into adapter integration notes.
-- `RunnerPlannerAgent`: proposes commands, execution steps, and expected outputs.
-- `ResultAnalystAgent`: summarizes provided or simulated metric results.
-- `ConsistencyCheckerAgent`: checks that claims, metrics, baselines, dataset, and runner plan line up.
-- `ReportGeneratorAgent`: writes a markdown report from the full workflow context.
+- `PaperReaderAgent`: reads configured paper metadata and extracts lightweight method keywords.
+- `CodeScannerAgent`: scans a local repository path for dependency files, likely entrypoints, and repository risks.
+- `BaselineBuilderAgent`: maps requested baselines to the built-in or external adapter path.
+- `ExperimentDesignerAgent`: converts task, dataset, metrics, split, seed, and baselines into an experiment plan.
+- `RunnerPlannerAgent`: produces expected execution steps, command suggestions, and output locations.
+- `ResultAnalystAgent`: summarizes provided metric results or marks analysis as pending.
+- `ConsistencyCheckerAgent`: checks whether task type, metrics, dataset, baselines, and runner plan are aligned.
+- `ReportGeneratorAgent`: turns the accumulated context into a concise markdown report.
 
-## Why LLM APIs Are Optional
+See [docs/agents.md](docs/agents.md) for detailed agent responsibilities.
 
-PaperPilot-Agent is designed to fit local research workflows. Some users will run it from Cursor, Windsurf, VS Code, or another IDE agent. Others may later connect hosted or local LLM providers. This project keeps the core workflow deterministic first, with clear interfaces where richer LLM-backed behavior can be added later.
+## Features
 
-## Install
+- Local deterministic workflow with no required external services.
+- YAML project configuration with validation.
+- Built-in regression baseline examples: `mean` and `linear_regression`.
+- Baseline adapter interface for wrapping external methods.
+- Regression metric registry for `mae`, `mse`, `rmse`, and `r2`.
+- CLI entrypoint for generating `outputs/report.md`.
+- Smoke-testable minimal example under `examples/smopca_minimal`.
+- Documentation designed around research benchmark planning rather than generic package usage.
+
+## Repository Structure
+
+```text
+paperpilot/
+  agents/        Rule-based workflow agents.
+  baselines/     Baseline adapter interface and built-in baselines.
+  core/          Config loading and file I/O helpers.
+  metrics/       Metric implementations and registry.
+  workflow/      Orchestrator that runs agents and writes reports.
+docs/            Architecture, agent, and workflow documentation.
+examples/
+  smopca_minimal/  Minimal regression benchmark planning demo.
+tests/           Unit and smoke tests.
+outputs/         Generated report location for the demo workflow.
+```
+
+## Quickstart
 
 ```bash
 git clone https://github.com/your-org/paperpilot-agent.git
 cd paperpilot-agent
 pip install -e ".[dev]"
-```
-
-## Run The Demo
-
-```bash
 python -m paperpilot.cli run examples/smopca_minimal/project.yaml
 ```
 
-Or, after installation:
+After installation, the console script is also available:
 
 ```bash
 paperpilot run examples/smopca_minimal/project.yaml
 ```
 
-The demo writes:
+Run tests with:
+
+```bash
+python -m pytest
+```
+
+## Example: `examples/smopca_minimal`
+
+The minimal example is a small SMOPCA-inspired regression benchmark planning demo. It includes:
+
+- `examples/smopca_minimal/project.yaml`: project configuration.
+- `examples/smopca_minimal/sample_dataset.csv`: tiny local dataset with `x1`, `x2`, and target column `y`.
+- `docs/legacy_experiments.md`: short paper-style motivation referenced by the config.
+- Baselines: `mean` and `linear_regression`.
+- Metrics: `mae`, `mse`, `rmse`, and `r2`.
+
+Run it from the repository root:
+
+```bash
+python -m paperpilot.cli run examples/smopca_minimal/project.yaml
+```
+
+The workflow writes:
 
 ```text
 outputs/report.md
 ```
 
-## Run Tests
+## Expected Output Report
 
-```bash
-python -m pytest -q
-```
+The generated report is intentionally concise. It currently includes:
 
-## Add Your Own Baseline
+- Paper summary.
+- Method keywords.
+- Experiment plan with task, dataset, metrics, and baselines.
+- Runner plan steps.
+- Result analysis status.
+- Consistency check passes and warnings.
 
-Implement the adapter interface:
-
-```python
-from paperpilot.baselines.adapters import BaseBaselineAdapter
-
-class MyMethodBaseline(BaseBaselineAdapter):
-    def fit(self, X, y):
-        ...
-
-    def predict(self, X):
-        ...
-```
-
-Then register it:
-
-```python
-from paperpilot.baselines.registry import register_baseline
-
-register_baseline("my_method", MyMethodBaseline)
-```
-
-Third-party paper methods can be wrapped this way without mixing their source code into the core package.
+For the minimal demo, result analysis is marked as pending because the current workflow plans the benchmark and report; it does not yet execute full model training or import completed runner outputs automatically.
 
 ## Current Status
 
 Implemented:
 
-- deterministic local agent workflow
-- YAML project config loading and validation
-- baseline adapter interface
-- `MeanBaseline`
-- `LinearRegressionBaseline`
-- regression metrics: MAE, MSE, RMSE, R2
-- CLI entrypoint
-- smoke-testable demo project
+- Deterministic local agent workflow.
+- CLI command for running a project config.
+- YAML config loading and validation.
+- Shared workflow context passed through eight agents.
+- Built-in baseline adapter examples.
+- Basic regression metrics.
+- Minimal smoke-tested demo project.
+- Markdown report generation.
 
-Planned:
+Prototype boundaries:
 
-- richer repository scanners
-- optional LLM provider adapters
-- classification and clustering metrics
-- experiment execution backends
-- structured report export
-- adapter templates for common research code layouts
+- Repository scanning is shallow and rule-based.
+- Baseline adapter generation is a plan, not automatic code synthesis.
+- Result analysis uses provided config results or placeholders.
+- The current runner plan describes steps but does not execute external research repositories.
+
+## Roadmap
+
+- Optional LLM integration for paper parsing, code understanding, and report drafting.
+- Richer repository parsing for common Python research layouts.
+- Adapter template generation for external baselines.
+- Structured experiment runner backends.
+- Import of completed result files from benchmark runs.
+- More task families, including classification and clustering.
+- JSON or HTML report export.
+- Stronger consistency checks for dataset schema, metrics, and claims.
+
+## Limitations
+
+PaperPilot-Agent should be treated as an MVP workflow system, not a complete paper reproduction engine. It does not guarantee that a paper can be reproduced, that an external repository is runnable, or that baseline comparisons are scientifically valid without human review. The goal is to make benchmark planning more explicit, inspectable, and easier to iterate.
+
+## Resume-Friendly Project Summary
+
+PaperPilot-Agent is a local Python prototype for research baseline and benchmark planning. It orchestrates eight deterministic agents that turn paper metadata, repository paths, dataset settings, metrics, and baseline choices into an experiment plan, baseline adapter plan, runner steps, consistency checks, and a markdown report. The project includes a CLI, YAML config validation, built-in regression baseline examples, metric utilities, tests, and a minimal SMOPCA-inspired demo.
