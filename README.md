@@ -89,6 +89,8 @@ paperpilot run examples/toy_regression/project.yaml
 
 The minimal demo lives in [examples/toy_regression](examples/toy_regression). It includes a tiny CSV dataset, a `project.yaml` config, and an expected report example.
 
+It also points to [examples/external_method_repo](examples/external_method_repo), a tiny fake local method repository used to demonstrate repository inspection and adapter planning.
+
 Run it from the repository root:
 
 ```bash
@@ -101,6 +103,13 @@ The workflow writes the runtime report to:
 outputs/report.md
 ```
 
+When `method_repos` are configured, it also writes local inspection artifacts:
+
+```text
+outputs/repo_profiles/example_method.json
+outputs/adapter_plans/example_method_adapter_plan.md
+```
+
 An example report is kept at:
 
 ```text
@@ -111,6 +120,7 @@ examples/toy_regression/expected_report.md
 
 - It runs local workflows from `project.yaml`.
 - It includes built-in baseline examples and Markdown report generation.
+- It inspects configured local method repositories and writes repo profiles plus adapter plans.
 - It supports human review and consistency checks.
 - It does not replace researcher judgment.
 - External repository execution is a planned extension.

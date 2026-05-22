@@ -12,4 +12,5 @@ def test_workflow_generates_report():
 
     assert report_path.exists()
     assert "PaperPilot Report: toy_regression" in report_path.read_text(encoding="utf-8")
+    assert "Local Method Repositories" in report_path.read_text(encoding="utf-8")
     assert context["outputs"]["report_path"] == "outputs\\report.md" or context["outputs"]["report_path"] == "outputs/report.md"

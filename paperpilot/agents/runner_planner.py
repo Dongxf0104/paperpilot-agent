@@ -13,13 +13,22 @@ class RunnerPlannerAgent(BaseAgent):
     def run(self, context: dict[str, Any]) -> dict[str, Any]:
         config_path = Path(context["config"]["_config_path"])
         command = f"paperpilot run {config_path.as_posix()}"
+        repo_profiles = context.get("repo_profiles", [])
+        method_repo_steps = [
+            f"Review local method repo profile and adapter plan for {profile['repo_name']}."
+            for profile in repo_profiles
+        ]
+        method_repo_outputs = []
+        for profile in repo_profiles:
+            method_repo_outputs.extend([profile["profile_path"], profile["adapter_plan_path"]])
         context["commands"] = [command]
         context["execution_steps"] = [
             "Load and validate project configuration.",
             "Inspect paper and repository inputs.",
+            *method_repo_steps,
             "Create experiment and baseline adapter plans.",
             "Run or import benchmark results.",
             "Generate consistency-checked markdown report.",
         ]
-        context["expected_outputs"] = ["outputs/report.md"]
+        context["expected_outputs"] = ["outputs/report.md", *method_repo_outputs]
         return context

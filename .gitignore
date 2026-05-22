@@ -35,6 +35,8 @@ raw_data/
 *.7z
 
 # Temporary outputs
+outputs/repo_profiles/
+outputs/adapter_plans/
 outputs/*.md
 tmp/
 temp/

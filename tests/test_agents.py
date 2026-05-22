@@ -29,4 +29,5 @@ def test_agents_run_without_error():
 
     assert context["paper_summary"]
     assert context["experiment_plan"]["task_type"] == "regression"
+    assert context["repo_profiles"][0]["repo_name"] == "example_method"
     assert "# PaperPilot Report" in context["report_markdown"]

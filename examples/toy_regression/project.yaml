@@ -17,5 +17,8 @@ metrics: [mae, mse, rmse, r2]
 baselines:
   - name: mean
   - name: linear_regression
+method_repos:
+  - name: example_method
+    path: examples/external_method_repo
 outputs:
   dir: outputs

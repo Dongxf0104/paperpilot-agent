@@ -7,7 +7,7 @@ PaperPilot-Agent uses a fixed sequence of lightweight agents. In the current MVP
 | Agent | Main Responsibility | Adds To Workflow Context |
 | --- | --- | --- |
 | `PaperReaderAgent` | Reads configured paper metadata. | Paper summary, method keywords, claimed contributions. |
-| `CodeScannerAgent` | Inspects the configured local repository path. | Entrypoints, dependency hints, risk notes. |
+| `CodeScannerAgent` | Inspects the configured local repository path and optional local method repositories. | Entrypoints, dependency hints, repo profiles, adapter plans, risk notes. |
 | `BaselineBuilderAgent` | Plans baseline adapter integration. | Baseline adapter plan. |
 | `ExperimentDesignerAgent` | Creates the benchmark experiment plan. | Task, dataset, target, metrics, split, seed, baselines. |
 | `RunnerPlannerAgent` | Proposes execution steps and outputs. | Commands, runner steps, expected outputs. |
@@ -27,13 +27,13 @@ PaperPilot-Agent uses a fixed sequence of lightweight agents. In the current MVP
 
 ## CodeScannerAgent
 
-**Purpose:** Inspect the configured repository path for dependency and entrypoint hints.
+**Purpose:** Inspect the configured repository path for dependency and entrypoint hints. When `method_repos` are configured, it also scans those local method repositories and writes human-reviewable repo profiles plus adapter plans.
 
-**Input:** `inputs.repository` from `project.yaml`.
+**Input:** `inputs.repository` and optional `method_repos` from `project.yaml`.
 
-**Output:** `detected_entrypoints`, `detected_dependencies`, and `risk_notes`.
+**Output:** `detected_entrypoints`, `detected_dependencies`, `risk_notes`, `repo_profiles`, and `adapter_plan_paths`. Method repo artifacts are written under `outputs/repo_profiles/` and `outputs/adapter_plans/`.
 
-**Why it matters:** Many baseline projects fail at the repository handoff stage. A shallow scan cannot prove a method is runnable, but it can record obvious dependency files, likely Python entrypoints, and missing-path risks.
+**Why it matters:** Many baseline projects fail at the repository handoff stage. A scanner cannot prove a method is runnable, but it can record README files, dependency files, likely entrypoints, config files, data-loading hints, training files, evaluation files, and missing-path risks for human review.
 
 ## BaselineBuilderAgent
 

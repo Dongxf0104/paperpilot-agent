@@ -11,6 +11,12 @@ class ReportGeneratorAgent(BaseAgent):
 
     def run(self, context: dict[str, Any]) -> dict[str, Any]:
         config = context["config"]
+        method_repo_lines = [
+            f"- {profile['repo_name']}: profile `{profile['profile_path']}`, adapter plan `{profile['adapter_plan_path']}`"
+            for profile in context.get("repo_profiles", [])
+        ]
+        if not method_repo_lines:
+            method_repo_lines = ["- No local method repositories configured."]
         lines = [
             f"# PaperPilot Report: {config['project']['name']}",
             "",
@@ -25,6 +31,9 @@ class ReportGeneratorAgent(BaseAgent):
             f"- Dataset: {context['experiment_plan']['dataset']}",
             f"- Metrics: {', '.join(context['experiment_plan']['metrics'])}",
             f"- Baselines: {', '.join(item['name'] if isinstance(item, dict) else str(item) for item in config['baselines'])}",
+            "",
+            "## Local Method Repositories",
+            *method_repo_lines,
             "",
             "## Runner Plan",
             *[f"- {step}" for step in context.get("execution_steps", [])],
