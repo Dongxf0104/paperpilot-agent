@@ -96,7 +96,8 @@ outputs/         Generated report location for the demo workflow.
 ```bash
 git clone https://github.com/your-org/paperpilot-agent.git
 cd paperpilot-agent
-pip install -e ".[dev]"
+pip install -e .
+python -m pytest
 python -m paperpilot.cli run examples/smopca_minimal/project.yaml
 ```
 
