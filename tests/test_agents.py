@@ -12,7 +12,7 @@ from paperpilot.core.config import load_project_config
 
 
 def test_agents_run_without_error():
-    context = {"config": load_project_config("examples/smopca_minimal/project.yaml")}
+    context = {"config": load_project_config("examples/toy_regression/project.yaml")}
     agents = [
         PaperReaderAgent(),
         CodeScannerAgent(),

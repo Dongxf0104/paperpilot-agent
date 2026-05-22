@@ -1,14 +1,14 @@
-# PaperPilot Report: smopca_minimal
+# PaperPilot Report: toy_regression
 
 ## Paper Summary
-Lightweight SMOPCA-inspired benchmark planning example for regression baselines.
+Lightweight toy regression benchmark planning example for baseline workflows.
 
 ## Method Keywords
 baseline, benchmark, regression
 
 ## Experiment Plan
 - Task: regression
-- Dataset: examples/smopca_minimal/sample_dataset.csv
+- Dataset: examples/toy_regression/sample_dataset.csv
 - Metrics: mae, mse, rmse, r2
 - Baselines: mean, linear_regression
 

@@ -8,12 +8,12 @@ The current release is deterministic and runs locally from a `project.yaml` file
 
 ## What Works Now
 
-- CLI workflow: `python -m paperpilot.cli run examples/smopca_minimal/project.yaml`.
+- CLI workflow: `python -m paperpilot.cli run examples/toy_regression/project.yaml`.
 - YAML project config loading and validation.
 - Eight-agent local workflow for paper summary, repository scanning, baseline planning, experiment planning, runner planning, result analysis, consistency checking, and report generation.
 - Built-in baseline examples: `mean` and `linear_regression`.
 - Regression metric utilities for `mae`, `mse`, `rmse`, and `r2`.
-- Minimal SMOPCA-inspired demo with a tiny CSV dataset.
+- Minimal toy regression demo with a tiny CSV dataset.
 - Markdown report generation at `outputs/report.md`.
 - Pytest smoke coverage for agents, config, baseline registry, and workflow output.
 - GitHub Actions CI for tests and the minimal demo.

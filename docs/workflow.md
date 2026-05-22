@@ -52,10 +52,10 @@ Markdown Report
 
 ## Minimal Demo Workflow
 
-The `examples/smopca_minimal` demo uses a tiny local regression dataset and two built-in baselines. Its config lives at:
+The `examples/toy_regression` demo uses a tiny local regression dataset and two built-in baselines. Its config lives at:
 
 ```text
-examples/smopca_minimal/project.yaml
+examples/toy_regression/project.yaml
 ```
 
 Key fields:
@@ -64,7 +64,7 @@ Key fields:
 | --- | --- |
 | Paper source | `docs/legacy_experiments.md` |
 | Repository | Current repository root, `.` |
-| Dataset | `examples/smopca_minimal/sample_dataset.csv` |
+| Dataset | `examples/toy_regression/sample_dataset.csv` |
 | Target column | `y` |
 | Task | `regression` |
 | Split | `deterministic 80/20 holdout` |
@@ -75,13 +75,19 @@ Key fields:
 Run from the repository root:
 
 ```bash
-python -m paperpilot.cli run examples/smopca_minimal/project.yaml
+python -m paperpilot.cli run examples/toy_regression/project.yaml
 ```
 
-Expected output:
+Runtime output:
 
 ```text
 outputs/report.md
+```
+
+Example output:
+
+```text
+examples/toy_regression/expected_report.md
 ```
 
 The generated report should include the paper summary, method keywords, experiment plan, runner plan, pending result-analysis note, and consistency checks.

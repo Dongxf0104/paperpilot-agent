@@ -35,6 +35,7 @@ raw_data/
 *.7z
 
 # Temporary outputs
+outputs/*.md
 tmp/
 temp/
 logs/

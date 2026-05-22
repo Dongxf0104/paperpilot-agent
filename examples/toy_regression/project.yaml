@@ -1,13 +1,13 @@
 project:
-  name: smopca_minimal
+  name: toy_regression
 inputs:
   paper:
     path: docs/legacy_experiments.md
-    summary: Lightweight SMOPCA-inspired benchmark planning example for regression baselines.
+    summary: Lightweight toy regression benchmark planning example for baseline workflows.
     claimed_contributions: [adapter workflow, benchmark reporting]
   repository: .
 dataset:
-  path: examples/smopca_minimal/sample_dataset.csv
+  path: examples/toy_regression/sample_dataset.csv
   target: y
 task:
   type: regression
