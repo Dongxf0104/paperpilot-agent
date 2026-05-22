@@ -72,7 +72,7 @@ More detail is available in [docs/agents.md](docs/agents.md) and [docs/workflow.
 ## Quickstart
 
 ```bash
-git clone https://github.com/your-org/paperpilot-agent.git
+git clone https://github.com/Dongxf0104/paperpilot-agent.git
 cd paperpilot-agent
 pip install -e .
 python -m pytest
@@ -89,7 +89,7 @@ paperpilot run examples/toy_regression/project.yaml
 
 The minimal demo lives in [examples/toy_regression](examples/toy_regression). It includes a tiny CSV dataset, a `project.yaml` config, and an expected report example.
 
-It also points to [examples/external_method_repo](examples/external_method_repo), a tiny fake local method repository used to demonstrate repository inspection and adapter planning.
+It also points to [examples/external_method_repo](examples/external_method_repo), a toy local method repository for demonstrating repository inspection and adapter planning.
 
 Run it from the repository root:
 
