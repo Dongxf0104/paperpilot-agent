@@ -13,8 +13,7 @@ class EvaluationAgent(BaseAgent):
 
     def run(self, context: dict[str, Any]) -> dict[str, Any]:
         output_dir = Path(context["output_dir"])
-        metrics = context.get("metrics_config", {}).get("metrics", [])
-        metric_names = [item.get("name", str(item)) if isinstance(item, dict) else str(item) for item in metrics]
+        metric_names = context.get("metric_names", [])
         warnings = context.get("metrics_warnings", [])
         lines = [
             "# Evaluation Protocol",

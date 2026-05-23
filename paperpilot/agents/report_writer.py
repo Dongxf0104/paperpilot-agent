@@ -14,6 +14,7 @@ class ReportWriterAgent(BaseAgent):
     def run(self, context: dict[str, Any]) -> dict[str, Any]:
         config = context["config"]
         output_dir = Path(context["output_dir"])
+        metric_names = context.get("metric_names", [])
         warnings = [
             warning
             for record in context.get("agent_records", [])
@@ -29,6 +30,7 @@ class ReportWriterAgent(BaseAgent):
             f"- Task name: {config.get('task_name')}",
             f"- Task type: {config.get('task_type')}",
             f"- Mode: {config.get('mode', 'dry_run')}",
+            f"- Configured metrics: {', '.join(metric_names) or 'none configured'}",
             "",
             "## Generated Artifacts",
             "- `paper_summary.md`",

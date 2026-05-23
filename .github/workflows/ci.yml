@@ -24,4 +24,6 @@ jobs:
         run: python -m pytest
 
       - name: Run minimal demo
-        run: python -m paperpilot.cli run examples/toy_regression/project.yaml
+        run: |
+          python -m paperpilot init-case ci_demo_case
+          python -m paperpilot run cases/ci_demo_case/case_config.yaml
