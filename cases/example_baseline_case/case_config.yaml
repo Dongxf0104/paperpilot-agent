@@ -1,0 +1,24 @@
+case_name: example_baseline_case
+task_name: baseline_planning
+task_type: "your research task type"
+
+papers:
+  - inputs/papers/your_paper.pdf
+
+methods:
+  main_method:
+    name: YourMethod
+    repo_path: inputs/repos/YourMethod
+  baselines:
+    - name: BaselineA
+      repo_path: inputs/repos/BaselineA
+
+dataset:
+  name: your_dataset
+  path: inputs/datasets/your_dataset
+
+metrics:
+  path: inputs/metrics/your_metrics.yaml
+
+output_dir: outputs/example_baseline_case
+mode: dry_run

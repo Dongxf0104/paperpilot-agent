@@ -24,5 +24,8 @@ paperpilot = "paperpilot.cli:main"
 [tool.setuptools.packages.find]
 include = ["paperpilot*"]
 
+[tool.setuptools.package-data]
+paperpilot = ["templates/*.yaml"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

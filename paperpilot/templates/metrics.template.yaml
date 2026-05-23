@@ -1,0 +1,11 @@
+metrics:
+  - name: ARI
+    full_name: Adjusted Rand Index
+    category: clustering_agreement
+    requires: [predicted_clusters, ground_truth_labels]
+    direction: higher_is_better
+  - name: NMI
+    full_name: Normalized Mutual Information
+    category: clustering_agreement
+    requires: [predicted_clusters, ground_truth_labels]
+    direction: higher_is_better

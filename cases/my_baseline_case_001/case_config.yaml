@@ -1,0 +1,24 @@
+case_name: my_baseline_case_001
+task_name: baseline_planning
+task_type: "please specify task type, e.g. spatial multi-omics integration / image classification / time-series forecasting"
+
+papers:
+  - inputs/papers/your_paper.pdf
+
+methods:
+  main_method:
+    name: YourMethod
+    repo_path: inputs/repos/YourMethod
+  baselines:
+    - name: BaselineA
+      repo_path: inputs/repos/BaselineA
+
+dataset:
+  name: your_dataset_name
+  path: inputs/datasets/your_dataset
+
+metrics:
+  path: inputs/metrics/your_metrics.yaml
+
+output_dir: outputs/my_baseline_case_001
+mode: dry_run

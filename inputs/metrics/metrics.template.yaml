@@ -1,0 +1,6 @@
+metrics:
+  - name: Accuracy
+    full_name: Accuracy
+    category: task_metric
+    requires: [predictions, ground_truth]
+    direction: higher_is_better

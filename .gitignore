@@ -1,4 +1,25 @@
-# Python
+inputs/papers/*
+!inputs/papers/README.md
+!inputs/papers/.gitkeep
+
+inputs/repos/*
+!inputs/repos/README.md
+!inputs/repos/.gitkeep
+
+inputs/datasets/*
+!inputs/datasets/README.md
+!inputs/datasets/.gitkeep
+
+inputs/metrics/*
+!inputs/metrics/README.md
+!inputs/metrics/.gitkeep
+!inputs/metrics/*.template.yaml
+
+outputs/*
+!outputs/.gitkeep
+
+paperpilot-agent/
+
 __pycache__/
 *.pyc
 *.py[cod]
@@ -8,40 +29,21 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
-# Virtual environments
+.env
+.env.local
 .venv/
 venv/
 env/
-
-# IDE
-.vscode/
-.idea/
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Secrets
-.env
-.env.local
-*.key
-
-# Large or temporary data
-data/
-datasets/
-raw_data/
+/data/
+/datasets/
+/raw_data/
 *.zip
 *.rar
 *.7z
-
-# Temporary outputs
-outputs/repo_profiles/
-outputs/adapter_plans/
-outputs/*.md
 tmp/
 temp/
 logs/
 *.log
-
-# Recovered / damaged files
-recovered/

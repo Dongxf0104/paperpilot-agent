@@ -1,140 +1,109 @@
 # PaperPilot-Agent
 
-PaperPilot-Agent is a local, human-in-the-loop multi-agent workflow for research baseline and benchmark planning.
+## Project Overview
 
-## What It Does
+PaperPilot-Agent is a human-in-the-loop research baseline and benchmark planning agent. Researchers provide papers, local method repositories, datasets, and metric configuration files. PaperPilot-Agent runs a small multi-agent CLI workflow that produces planning artifacts for dry-run experiment design and smoke-test validation.
 
-PaperPilot-Agent turns a `project.yaml` configuration into a structured benchmark planning report. It connects paper metadata, repository paths, dataset settings, metrics, and baseline choices through a sequence of small agents that produce:
+It is designed to help structure baseline work before expensive training or reproduction attempts. It does not claim to fully reproduce arbitrary papers automatically.
 
-- paper and method summary signals
-- repository scan notes
-- baseline adapter planning
-- experiment design
-- runner steps
-- result-analysis status
-- consistency checks
-- a Markdown report
+## What PaperPilot-Agent Does
 
-## Research Workflow Problems It Helps With
+- Generates a lightweight paper summary.
+- Inspects local method repositories for README files, dependency files, candidate entrypoints, examples, and warnings.
+- Checks dataset structure and likely data, label, and coordinate files.
+- Creates a baseline experiment plan.
+- Plans method adapter interfaces for `prepare`, `run`, `collect_outputs`, and `evaluate`.
+- Generates an evaluation protocol.
+- Writes a final report and `smoke_test.json` trace.
 
-- Papers often describe benchmark claims without clean execution steps.
-- Method repositories may have unclear dependencies or entrypoints.
-- Dataset, target, metric, split, and baseline assumptions can drift from each other.
-- External baselines usually need adapters before comparison.
-- Reports are easier to review when they are generated from the same workflow context as the plan.
+## What It Does Not Do Yet
 
-## Core Workflow
+- It does not guarantee complete automatic reproduction of any paper.
+- It does not guarantee automatic resolution of all environment or dependency issues.
+- Real training usually requires method-specific adapters.
+- Deep LLM-based paper and code understanding is optional future work, not required for the default deterministic workflow.
 
-```text
-Paper / Repo / Dataset / Metrics
-        |
-        v
-PaperReaderAgent
-        |
-        v
-CodeScannerAgent
-        |
-        v
-BaselineBuilderAgent
-        |
-        v
-ExperimentDesignerAgent
-        |
-        v
-RunnerPlannerAgent
-        |
-        v
-ResultAnalystAgent
-        |
-        v
-ConsistencyCheckerAgent
-        |
-        v
-ReportGeneratorAgent
-        |
-        v
-outputs/report.md
-```
-
-## Agent Roles
-
-- `PaperReaderAgent`: extracts configured paper summary, keywords, and claimed contributions.
-- `CodeScannerAgent`: scans the configured local repository path for dependency and entrypoint hints.
-- `BaselineBuilderAgent`: records whether each baseline is built in or needs an external adapter.
-- `ExperimentDesignerAgent`: builds the task, dataset, metric, split, seed, and baseline plan.
-- `RunnerPlannerAgent`: proposes runner steps, command hints, and expected outputs.
-- `ResultAnalystAgent`: summarizes provided results or marks results as pending.
-- `ConsistencyCheckerAgent`: checks alignment across task, metrics, dataset, baselines, and runner plan.
-- `ReportGeneratorAgent`: generates the final Markdown report.
-
-More detail is available in [docs/agents.md](docs/agents.md) and [docs/workflow.md](docs/workflow.md).
-
-## Quickstart
+## Quick Start
 
 ```bash
-git clone https://github.com/Dongxf0104/paperpilot-agent.git
+git clone <repo-url>
 cd paperpilot-agent
-pip install -e .
-python -m pytest
-python -m paperpilot.cli run examples/toy_regression/project.yaml
+pip install -r requirements.txt
 ```
 
-After installation, the console script is also available:
+Place your materials under `inputs/`:
+
+```text
+inputs/papers/your_paper.pdf
+inputs/repos/YourMethod/
+inputs/repos/BaselineA/
+inputs/datasets/your_dataset/
+inputs/metrics/your_metrics.yaml
+```
+
+Create a case:
 
 ```bash
-paperpilot run examples/toy_regression/project.yaml
+python -m paperpilot init-case my_baseline_case_001
 ```
 
-## Example
+Edit the generated file:
 
-The minimal demo lives in [examples/toy_regression](examples/toy_regression). It includes a tiny CSV dataset, a `project.yaml` config, and an expected report example.
+```text
+cases/my_baseline_case_001/case_config.yaml
+```
 
-It also points to [examples/external_method_repo](examples/external_method_repo), a toy local method repository for demonstrating repository inspection and adapter planning.
-
-Run it from the repository root:
+Run PaperPilot-Agent:
 
 ```bash
-python -m paperpilot.cli run examples/toy_regression/project.yaml
+python -m paperpilot run cases/my_baseline_case_001/case_config.yaml
 ```
 
-The workflow writes the runtime report to:
+Read the report:
 
 ```text
-outputs/report.md
+outputs/my_baseline_case_001/report.md
 ```
 
-When `method_repos` are configured, it also writes local inspection artifacts:
+## Input Layout
 
-```text
-outputs/repo_profiles/example_method.json
-outputs/adapter_plans/example_method_adapter_plan.md
+- `inputs/papers/`: paper PDFs or text exports.
+- `inputs/repos/`: local method repositories for the main method and baselines.
+- `inputs/datasets/`: local datasets or dataset folders.
+- `inputs/metrics/`: metric configuration YAML files.
+
+Large local inputs are ignored by Git by default. Keep private data local.
+
+## Case Config
+
+`case_config.yaml` describes one planning case:
+
+- `case_name`: short case identifier.
+- `task_name`: workflow task name, usually `baseline_planning`.
+- `task_type`: research task type, such as spatial multi-omics integration, image classification, or time-series forecasting.
+- `papers`: list of paper paths under `inputs/papers/`.
+- `methods.main_method`: primary method name and local repo path.
+- `methods.baselines`: baseline method names and local repo paths.
+- `dataset`: dataset name and local path.
+- `metrics.path`: metric YAML file path.
+- `output_dir`: where generated artifacts should be written.
+- `mode`: default mode is `dry_run`.
+
+## Output Files
+
+PaperPilot-Agent writes these files into the configured `output_dir`:
+
+- `paper_summary.md`: paper source summary and parser warnings.
+- `repo_inspection.md`: repository structure, dependency, entrypoint, and warning report.
+- `dataset_check.md`: dataset structure and candidate data/label/coordinate files.
+- `baseline_plan.yaml`: method inputs, outputs, run steps, metrics, and risk points.
+- `adapter_plan.md`: adapter interface plan for each method.
+- `evaluation_protocol.md`: comparison protocol and required aligned outputs.
+- `report.md`: final human-readable summary and agent trace.
+- `smoke_test.json`: machine-readable checks, agent inputs, outputs, and warnings.
+
+## Example Command
+
+```bash
+python -m paperpilot run cases/my_baseline_case_001/case_config.yaml
 ```
-
-An example report is kept at:
-
-```text
-examples/toy_regression/expected_report.md
-```
-
-## Current Scope
-
-- It runs local workflows from `project.yaml`.
-- It includes built-in baseline examples and Markdown report generation.
-- It inspects configured local method repositories and writes repo profiles plus adapter plans.
-- It supports human review and consistency checks.
-- It does not replace researcher judgment.
-- External repository execution is a planned extension.
-
-## Roadmap
-
-- Optional LLM-backed paper and code understanding.
-- Richer repository parsing for common research code layouts.
-- Adapter templates for external baselines.
-- Structured local experiment runners.
-- Result ingestion from CSV or JSON files.
-- Stronger checks for dataset schema, metric direction, and paper-claim coverage.
-- Additional task families beyond regression.
-
-## License
-
-MIT. See [LICENSE](LICENSE).
