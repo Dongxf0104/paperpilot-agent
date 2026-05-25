@@ -22,34 +22,27 @@ The default CLI workflow is config-driven and human-in-the-loop. It creates plan
 
 ```mermaid
 flowchart TD
-    U[User inputs + case_config.yaml] --> CLI[paperpilot CLI]
-    CLI --> PR[PaperReaderAgent]
-    PR --> RI[RepoInspectorAgent]
-    RI --> DI[DatasetInspectorAgent]
-    DI --> BP[BaselinePlannerAgent]
-    BP --> AP[AdapterPlannerAgent]
-    AP --> EV[EvaluationAgent]
-    EV --> RW[ReportWriterAgent]
-    RW --> REP[configured output_dir/report.md]
-    RW --> SMOKE[configured output_dir/smoke_test.json]
+    A[User Inputs] --> B[case-config.yaml]
+    A --> A1[papers/]
+    A --> A2[repos/]
+    A --> A3[data/]
+    A --> A4[metrics/]
 
-    CS[CodeScannerAgent]
-    ED[ExperimentDesignerAgent]
-    BB[BaselineBuilderAgent]
-    RP[RunnerPlannerAgent]
-    RA[ResultAnalystAgent]
-    CC[ConsistencyCheckerAgent]
-    RG[ReportGeneratorAgent]
+    B --> C[paperpilot CLI]
 
-    CS -. legacy/test-covered .- ED
-    ED -. legacy/test-covered .- BB
-    BB -. legacy/test-covered .- RP
-    RP -. legacy/test-covered .- RA
-    RA -. legacy/test-covered .- CC
-    CC -. legacy/test-covered .- RG
+    C --> D[PaperReaderAgent]
+    D --> E[RepoInspectorAgent]
+    E --> F[DatasetInspectorAgent]
+    F --> G[BaselinePlannerAgent]
+    G --> H[AdapterPlannerAgent]
+    H --> I[EvaluationAgent]
+    I --> J[ReportWriterAgent]
+
+    J --> K[configured output_dir/report.md]
+    J --> L[configured output_dir/smoke_test.json]
 ```
 
-`CodeScannerAgent`, `ExperimentDesignerAgent`, `BaselineBuilderAgent`, `RunnerPlannerAgent`, `ResultAnalystAgent`, `ConsistencyCheckerAgent`, and `ReportGeneratorAgent` still exist and are covered by the older `PaperPilotWorkflow`, but they are not called by `python -m paperpilot run ...`.
+Note: Some helper / older-workflow agents remain in the repository, but they are not part of the default CLI execution path.
 
 ## Agent Responsibilities
 
