@@ -16,6 +16,60 @@ It is designed to help structure baseline work before expensive training or repr
 - Generates an evaluation protocol.
 - Writes a final report and `smoke_test.json` trace.
 
+## Agent Workflow
+
+The default CLI workflow is config-driven and human-in-the-loop. It creates planning and review artifacts for baseline benchmark automation; it does not run arbitrary external training code automatically.
+
+```mermaid
+flowchart TD
+    U[User inputs + case_config.yaml] --> CLI[paperpilot CLI]
+    CLI --> PR[PaperReaderAgent]
+    PR --> RI[RepoInspectorAgent]
+    RI --> DI[DatasetInspectorAgent]
+    DI --> BP[BaselinePlannerAgent]
+    BP --> AP[AdapterPlannerAgent]
+    AP --> EV[EvaluationAgent]
+    EV --> RW[ReportWriterAgent]
+    RW --> REP[configured output_dir/report.md]
+    RW --> SMOKE[configured output_dir/smoke_test.json]
+
+    CS[CodeScannerAgent]
+    ED[ExperimentDesignerAgent]
+    BB[BaselineBuilderAgent]
+    RP[RunnerPlannerAgent]
+    RA[ResultAnalystAgent]
+    CC[ConsistencyCheckerAgent]
+    RG[ReportGeneratorAgent]
+
+    CS -. legacy/test-covered .- ED
+    ED -. legacy/test-covered .- BB
+    BB -. legacy/test-covered .- RP
+    RP -. legacy/test-covered .- RA
+    RA -. legacy/test-covered .- CC
+    CC -. legacy/test-covered .- RG
+```
+
+`CodeScannerAgent`, `ExperimentDesignerAgent`, `BaselineBuilderAgent`, `RunnerPlannerAgent`, `ResultAnalystAgent`, `ConsistencyCheckerAgent`, and `ReportGeneratorAgent` still exist and are covered by the older `PaperPilotWorkflow`, but they are not called by `python -m paperpilot run ...`.
+
+## Agent Responsibilities
+
+| Agent | Default CLI? | Responsibility | Main artifact |
+| --- | --- | --- | --- |
+| `PaperReaderAgent` | Yes | Samples configured papers and records parser warnings. | `paper_summary.md` |
+| `RepoInspectorAgent` | Yes | Inspects configured main and baseline repositories for README, dependency, and entrypoint hints. | `repo_inspection.md` |
+| `DatasetInspectorAgent` | Yes | Checks dataset path and likely data, label, and coordinate files. | `dataset_check.md` |
+| `BaselinePlannerAgent` | Yes | Builds the case-level baseline plan, unified output contract, run steps, and risks. | `baseline_plan.yaml` |
+| `AdapterPlannerAgent` | Yes | Plans `prepare`, `run`, `collect_outputs`, and `evaluate` adapter interfaces. | `adapter_plan.md` |
+| `EvaluationAgent` | Yes | Writes the shared evaluation protocol from configured metrics. | `evaluation_protocol.md` |
+| `ReportWriterAgent` | Yes | Writes the final report and agent trace. | `report.md` |
+| `CodeScannerAgent` | Legacy/helper | Produces deeper method-repo profiles and adapter-plan hints for the older workflow. | `repo_profiles/*.json`, `adapter_plans/*.md` |
+| `ExperimentDesignerAgent` | Legacy | Builds a benchmark design from `examples/toy_regression/project.yaml`. | In-memory context |
+| `BaselineBuilderAgent` | Legacy | Marks legacy baselines as built-in or external-adapter-required. | In-memory context |
+| `RunnerPlannerAgent` | Legacy | Produces command and expected-output plans for the older workflow. | In-memory context |
+| `ResultAnalystAgent` | Legacy | Summarizes provided or placeholder metric results. | In-memory context |
+| `ConsistencyCheckerAgent` | Legacy | Checks task, metric, dataset, baseline, and runner-plan alignment in the older workflow. | In-memory context |
+| `ReportGeneratorAgent` | Legacy | Generates markdown for the older workflow; the orchestrator writes it to `outputs/report.md`. | `outputs/report.md` |
+
 ## What It Does Not Do Yet
 
 - It does not guarantee complete automatic reproduction of any paper.
